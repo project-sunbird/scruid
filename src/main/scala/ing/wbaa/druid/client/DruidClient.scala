@@ -34,11 +34,12 @@ import org.mdedetrich.akka.http.support.CirceHttpSupport
 import org.mdedetrich.akka.stream.support.CirceStreamSupport
 import org.typelevel.jawn.AsyncParser
 
-trait DruidClient extends CirceHttpSupport with CirceDecoders with LazyLogging {
+trait DruidClient extends CirceHttpSupport with CirceDecoders {
 
   // Execute health checks on a separate logger category so they can be filtered easily
   protected val healthLogger: Logger = Logger(s"${getClass.getName}.HealthCheck")
-
+  protected val logger: Logger       = Logger(s"${getClass.getName}")
+  import org.slf4j.{ Logger, LoggerFactory }
   logger.info(s"Using '${this.getClass.getName}' as http client")
 
   /**

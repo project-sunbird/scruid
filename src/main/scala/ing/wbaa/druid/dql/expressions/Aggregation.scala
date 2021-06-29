@@ -364,7 +364,7 @@ final case class InFilteredAgg(dimension: String,
 
   override def alias(name: String): InFilteredAgg = copy(name = Option(name))
 
-  override def getName: String = name.getOrElse(s"in_filtered_$dimension")
+  override def getName: String = name.getOrElse(aggregator.name)
 }
 
 final case class SelectorFilteredAgg(dimension: String,
@@ -382,7 +382,7 @@ final case class SelectorFilteredAgg(dimension: String,
 
   override def alias(name: String): SelectorFilteredAgg = copy(name = Option(name))
 
-  override def getName: String = name.getOrElse(s"selector_filtered_$dimension")
+  override def getName: String = name.getOrElse(aggregator.name)
 }
 
 final case class JavascriptAgg(
@@ -404,4 +404,27 @@ final case class JavascriptAgg(
   override def alias(name: String): AggregationExpression = copy(name = Option(name))
 
   override def getName: String = name.getOrElse(s"js_${fields.mkString("_")}")
+}
+
+final case class HLLAggregator(fieldName: String,
+                               name: Option[String] = None,
+                               lgK: Int = 12,
+                               tgtHLLType: String = "HLL_4",
+                               round: Boolean = false)
+    extends AggregationExpression {
+  override protected[dql] def build(): Aggregation =
+    HLLAggregation(
+      fieldName,
+      this.getName,
+      lgK,
+      tgtHLLType,
+      round
+    )
+  override def alias(name: String): HLLAggregator = copy(name = Option(name))
+  def setLgk(value: Int): HLLAggregator           = copy(lgK = value)
+  def setTgtHLLType(value: String): HLLAggregator = copy(tgtHLLType = value)
+  def setRound(v: Boolean): HLLAggregator         = copy(round = v)
+  def set(lgK: Int = 12, tgtHLLType: String = "HLL_4", isRound: Boolean = false): HLLAggregator =
+    copy(lgK = lgK, tgtHLLType = tgtHLLType, round = round)
+  override def getName: String = name.getOrElse(s"HLL_Aggregator_$fieldName")
 }

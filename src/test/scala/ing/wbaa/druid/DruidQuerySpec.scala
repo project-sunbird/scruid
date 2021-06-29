@@ -17,19 +17,19 @@
 
 package ing.wbaa.druid
 
-import scala.concurrent.Future
-import scala.concurrent.duration._
-import scala.language.postfixOps
-
 import akka.stream.scaladsl.Sink
 import ing.wbaa.druid.client.DruidHttpClient
-import ing.wbaa.druid.definitions._
 import ing.wbaa.druid.definitions.ArithmeticFunctions._
 import ing.wbaa.druid.definitions.FilterOperators._
+import ing.wbaa.druid.definitions._
 import io.circe.generic.auto._
 import org.scalatest.concurrent._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
+
+import scala.concurrent.Future
+import scala.concurrent.duration._
+import scala.language.postfixOps
 
 class DruidQuerySpec extends AnyWordSpec with Matchers with ScalaFutures {
 
@@ -44,6 +44,9 @@ class DruidQuerySpec extends AnyWordSpec with Matchers with ScalaFutures {
   case class TopCountry(count: Int, countryName: Option[String])
   case class AggregatedFilteredAnonymous(count: Int, isAnonymous: String, filteredCount: Int)
   case class PostAggregationAnonymous(count: Int, isAnonymous: String, halfCount: Double)
+
+
+
 
   "TimeSeriesQuery" should {
     "successfully be interpreted by Druid" in {

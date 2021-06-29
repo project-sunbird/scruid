@@ -52,18 +52,19 @@ object ExtractionFn {
   implicit val encoder: Encoder[ExtractionFn] = new Encoder[ExtractionFn] {
     override def apply(extFn: ExtractionFn) =
       (extFn match {
-        case x: RegexExtractionFn        => x.asJsonObject
-        case x: PartialExtractionFn      => x.asJsonObject
-        case x: SubstringExtractionFn    => x.asJsonObject
-        case StrlenExtractionFn          => StrlenExtractionFn.asJsonObject
-        case x: TimeFormatExtractionFn   => x.asJsonObject
-        case x: TimeParsingExtractionFn  => x.asJsonObject
-        case x: JavascriptExtractionFn   => x.asJsonObject
-        case x: CascadeExtractionFn      => x.asJsonObject
-        case x: StringFormatExtractionFn => x.asJsonObject
-        case x: UpperExtractionFn        => x.asJsonObject
-        case x: LowerExtractionFn        => x.asJsonObject
-        case x: BucketExtractionFn       => x.asJsonObject
+        case x: RegexExtractionFn            => x.asJsonObject
+        case x: PartialExtractionFn          => x.asJsonObject
+        case x: SubstringExtractionFn        => x.asJsonObject
+        case StrlenExtractionFn              => StrlenExtractionFn.asJsonObject
+        case x: TimeFormatExtractionFn       => x.asJsonObject
+        case x: TimeParsingExtractionFn      => x.asJsonObject
+        case x: JavascriptExtractionFn       => x.asJsonObject
+        case x: CascadeExtractionFn          => x.asJsonObject
+        case x: StringFormatExtractionFn     => x.asJsonObject
+        case x: UpperExtractionFn            => x.asJsonObject
+        case x: LowerExtractionFn            => x.asJsonObject
+        case x: BucketExtractionFn           => x.asJsonObject
+        case x: RegisteredLookupExtractionFn => x.asJsonObject
       }).add("type", extFn.`type`.asJson).asJson
   }
 }
@@ -153,4 +154,11 @@ case class BucketExtractionFn(
     offset: Option[Int] = Some(0)
 ) extends ExtractionFn {
   val `type` = ExtractionFnType.Bucket
+}
+
+case class RegisteredLookupExtractionFn(lookup: String,
+                                        retainMissingValue: Option[Boolean] = Option(false),
+                                        replaceMissingValueWith: Option[String] = None)
+    extends ExtractionFn {
+  override val `type` = ExtractionFnType.RegisteredLookup
 }

@@ -381,15 +381,21 @@ final class GroupByQueryBuilder private[dql] (dimensions: Iterable[Dim])
 
 final class ScanQueryBuilder private[dql] () extends QueryBuilderCommons {
 
-  private var columns: List[String]     = Nil
-  private var limitOpt: Option[Int]     = None
-  private var batchSizeOpt: Option[Int] = None
-  private var order: Order              = OrderType.None
+  private var columns: List[String]                  = Nil
+  private var limitOpt: Option[Int]                  = None
+  private var batchSizeOpt: Option[Int]              = None
+  private var order: Order                           = OrderType.None
+  private var virtualColumns: List[ExpressionColumn] = Nil
 
   def columns(cols: String*): this.type = this.columns(cols)
 
   def columns(cols: Iterable[String]): this.type = {
     columns = cols.foldRight(columns)((col, acc) => col :: acc)
+    this
+  }
+
+  def virtualColumns(cols: List[ExpressionColumn]): this.type = {
+    virtualColumns = cols
     this
   }
 
@@ -418,6 +424,7 @@ final class ScanQueryBuilder private[dql] () extends QueryBuilderCommons {
       intervals = this.intervals,
       filter = this.getFilters,
       columns = this.columns,
+      virtualColumns = this.virtualColumns,
       batchSize = this.batchSizeOpt,
       limit = this.limitOpt,
       order = this.order,

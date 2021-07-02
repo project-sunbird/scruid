@@ -212,12 +212,13 @@ case class TopNQuery(
   val dataSource: String = config.datasource
 
 }
-
+case class ExpressionColumn(`type`: String, name: String, expression: String, outputType: String)
 case class ScanQuery private (
     granularity: Granularity,
     intervals: Iterable[String],
     filter: Option[Filter],
     columns: Iterable[String],
+    virtualColumns: Iterable[ExpressionColumn],
     batchSize: Option[Int],
     limit: Option[Int],
     order: Option[Order],
@@ -229,7 +230,7 @@ case class ScanQuery private (
 
   val queryType: QueryType = QueryType.Scan
   val dataSource: String   = config.datasource
-  val resultFormat: String = "list"
+  val resultFormat: String = "compactedList"
 }
 
 object ScanQuery {
@@ -238,6 +239,7 @@ object ScanQuery {
       granularity: Granularity,
       intervals: Iterable[String],
       columns: Iterable[String] = Iterable.empty,
+      virtualColumns: Iterable[ExpressionColumn] = None,
       filter: Option[Filter] = None,
       batchSize: Option[Int] = None,
       limit: Option[Int] = None,
@@ -262,6 +264,7 @@ object ScanQuery {
                   intervals,
                   filter,
                   resultingColumns,
+                  virtualColumns,
                   batchSize,
                   limit,
                   Option(order),

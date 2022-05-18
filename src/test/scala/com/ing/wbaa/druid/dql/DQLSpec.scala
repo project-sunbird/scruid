@@ -448,6 +448,8 @@ class DQLSpec extends AnyWordSpec with Matchers with ScalaFutures {
       .columns("channel", "cityName", "countryIsoCode", "user")
       .granularity(GranularityType.Day)
       .interval("2011-06-01/2017-06-01")
+      .virtualColumns(List(
+        ExpressionColumn("expression", "state", "lookup(derived_loc_state,'stateSlugLookup')", "STRING")))
       .batchSize(10)
       .limit(numberOfResults)
       .build()

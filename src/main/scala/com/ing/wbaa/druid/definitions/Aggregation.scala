@@ -26,29 +26,30 @@ import io.circe.syntax._
 
 sealed trait AggregationType extends Enum with CamelCaseEnumStringEncoder
 object AggregationType extends EnumCodec[AggregationType] {
-  case object Count       extends AggregationType
-  case object LongSum     extends AggregationType
-  case object DoubleSum   extends AggregationType
-  case object FloatSum    extends AggregationType
-  case object DoubleMax   extends AggregationType
-  case object DoubleMin   extends AggregationType
-  case object FloatMax    extends AggregationType
-  case object FloatMin    extends AggregationType
-  case object LongMin     extends AggregationType
-  case object LongMax     extends AggregationType
-  case object DoubleFirst extends AggregationType
-  case object DoubleLast  extends AggregationType
-  case object FloatFirst  extends AggregationType
-  case object FloatLast   extends AggregationType
-  case object LongFirst   extends AggregationType
-  case object LongLast    extends AggregationType
-  case object StringFirst extends AggregationType
-  case object StringLast  extends AggregationType
-  case object ThetaSketch extends AggregationType
-  case object HyperUnique extends AggregationType
-  case object Cardinality extends AggregationType
-  case object Filtered    extends AggregationType
-  case object Javascript  extends AggregationType
+  case object Count          extends AggregationType
+  case object LongSum        extends AggregationType
+  case object DoubleSum      extends AggregationType
+  case object FloatSum       extends AggregationType
+  case object DoubleMax      extends AggregationType
+  case object DoubleMin      extends AggregationType
+  case object FloatMax       extends AggregationType
+  case object FloatMin       extends AggregationType
+  case object LongMin        extends AggregationType
+  case object LongMax        extends AggregationType
+  case object DoubleFirst    extends AggregationType
+  case object DoubleLast     extends AggregationType
+  case object FloatFirst     extends AggregationType
+  case object FloatLast      extends AggregationType
+  case object LongFirst      extends AggregationType
+  case object LongLast       extends AggregationType
+  case object StringFirst    extends AggregationType
+  case object StringLast     extends AggregationType
+  case object ThetaSketch    extends AggregationType
+  case object HyperUnique    extends AggregationType
+  case object Cardinality    extends AggregationType
+  case object Filtered       extends AggregationType
+  case object Javascript     extends AggregationType
+  case object HLLSketchMerge extends AggregationType
   val values: Set[AggregationType] = sealerate.values[AggregationType]
 }
 
@@ -64,6 +65,7 @@ object Aggregation {
         case x: CountAggregation       => x.asJsonObject
         case x: CardinalityAggregation => x.asJsonObject
         case x: JavascriptAggregation  => x.asJsonObject
+        case x: HLLAggregation         => x.asJsonObject
         case x: SingleFieldAggregation => x.asJson.asObject.get
         case x: FilteredAggregation    => x.asJson.asObject.get
       }).add("type", agg.`type`.asJson).asJson
@@ -221,4 +223,13 @@ case class JavascriptAggregation(
 ) extends Aggregation {
   override val `type`: AggregationType = AggregationType.Javascript
 
+}
+
+case class HLLAggregation(name: String,
+                          fieldName: String,
+                          lgK: Int = 12,
+                          tgtHllType: String = "HLL_4",
+                          round: Boolean = false)
+    extends Aggregation {
+  override val `type`: AggregationType = AggregationType.HLLSketchMerge
 }
